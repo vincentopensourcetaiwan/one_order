@@ -13,8 +13,8 @@ class FoodsController < ApplicationController
     Food.includes(:meals).order(name: :asc).find_in_batches(batch_size: 100).each do |foods|
       @foods = foods.map do |food|
         food_ids = food.meals.map { |m| m.foods.pluck(:food_id).uniq }.flatten.uniq.reject { |e| e == food.id }.compact
-        { "Food Head" => food.name, "other_food" => foods.select { |f| food_ids.include?(f["id"]) }.map { |f| f.name }.sort }
-      end.sort_by { |f| f["Food Head"] }
+        { "Food Head" => food.name, "other_food" => foods.select { |f| food_ids.include?(f["id"]) }.map { |f| f.name }.sort } if food_ids.any?
+      end.compact.sort_by { |f| f["Food Head"] }
     end
     render :json => @foods
   end
