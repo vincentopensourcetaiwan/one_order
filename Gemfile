@@ -57,3 +57,4 @@ gem 'redcarpet'
 
 # debug
 gem 'pry'
+gem 'awesome_rails_console'
