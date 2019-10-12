@@ -10,10 +10,9 @@ class FoodsController < ApplicationController
   end
 
   def other_food
-    @foods = []
-    Food.includes(:meals).order(name: :asc).each do |food|
-      food_ids = food.meals.map { |m| m.foods.pluck(:food_id).uniq }.flatten.uniq.reject { |e| e == food.id }
-      @foods << { "Food Head" => food.name, "other_food" => Food.where(id: food_ids).map { |f| f.name }.sort } if food_ids.any?
+    @foods = Food.includes(:meals).order(name: :asc).map do |food|
+      food_ids = food.meals.map { |m| m.foods.pluck(:food_id).uniq }.flatten.uniq.reject { |e| e == food.id }.compact
+      { "Food Head" => food.name, "other_food" => Food.where(id: food_ids).map { |f| f.name }.sort }
     end
     render :json => @foods.sort_by { |f| f["Food Head"] }
   end
