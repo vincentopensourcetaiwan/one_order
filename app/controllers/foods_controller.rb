@@ -13,7 +13,7 @@ class FoodsController < ApplicationController
     @foods = Food.includes(:meals).order(name: :asc).map do |food|
       food_ids = food.meals.map { |m| m.foods.pluck(:food_id).uniq }.flatten.uniq.reject { |e| e == food.id }.compact
       { "Food Head" => food.name, "other_food" => Food.where(id: food_ids).map { |f| f.name }.sort }
-    end
-    render :json => @foods.sort_by { |f| f["Food Head"] }
+    end.sort_by { |f| f["Food Head"] }
+    render :json => @foods
   end
 end
